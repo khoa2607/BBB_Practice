@@ -1,0 +1,25 @@
+19:21:38 **** Incremental Build of configuration Debug for project Copy ****
+make all 
+Building file: ../src/Copy.c
+Invoking: Cross GCC Compiler
+arm-linux-gnueabihf-gcc -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/Copy.d" -MT"src/Copy.o" -o "src/Copy.o" "../src/Copy.c"
+../src/Copy.c: In function 'main':
+../src/Copy.c:33:22: warning: unused variable 'null' [-Wunused-variable]
+ unsigned char value, null=0x00; // sending only a single char
+                      ^~~~
+../src/Copy.c:33:15: warning: unused variable 'value' [-Wunused-variable]
+ unsigned char value, null=0x00; // sending only a single char
+               ^~~~~
+../src/Copy.c:31:24: warning: unused variable 'a' [-Wunused-variable]
+ unsigned int fd, i=0,b,a=112; // file handle and loop counter
+                        ^
+Finished building: ../src/Copy.c
+ 
+Building target: Copy
+Invoking: Cross GCC Linker
+arm-linux-gnueabihf-gcc  -o "Copy"  ./src/Copy.o   
+Finished building target: Copy
+ 
+
+19:21:39 Build Finished. 0 errors, 3 warnings. (took 610ms)
+

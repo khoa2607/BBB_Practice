@@ -1,0 +1,87 @@
+/*
+ ============================================================================
+ Name        : A.c
+ Author      : Khoa Le
+ Version     :
+ Copyright   : Your copyright notice
+ Description : Hello World in C, Ansi-style
+ ============================================================================
+ */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <stdint.h>
+
+#define user_option = 3;
+#define PATH "/sys/class/leds"
+
+
+int write_trigger_value(uint8_t led_option,char *value){
+
+	int fd,ret=0;
+	char buf[100];
+
+	//concatenate 2 strings and storing that into buf variable
+	snprintf(buf,sizeof(buf),PATH"//beaglebone:green:usr%d/trigger",led_option );
+
+
+	//open file in write mode
+	fd = open(buf,O_WRONLY); //buf is the path and O_WRONLY is for writing
+	if(fd<=0){
+		perror("write triggert error");
+		return -1;
+	}
+	//write the value to the folder
+	ret = write(fd,value,strlen(value));
+	if(ret <=0){
+		printf("trigger value write error");
+		return -1;
+	}
+	return 0;
+}
+
+//process trigger
+void process_trigger(char *value){
+
+	if(!(strcmp(value,"timer") && strcmp(value,"heartbeat") && strcmp(value,"none") && strcmp(value,"default-on"))){
+
+		write_trigger_value(user_option,value);
+	}
+	else{
+		printf("Invalid value for Trigger, Please choose again");
+	}
+}
+
+
+
+
+
+//pass argument to folder brightness or trigger
+int main(int args, char *arg_Array[]) {
+
+	printf("Choose which LED you want to control!");
+	if(args != 2){ //should 3 arguments: file, led mode, led brightness
+		printf("usage %s<control option> <value> \n ", arg_Array[0]);
+		printf("valid control options are:  trigger \n");
+		printf("valid brightness is 0 or 1 \n");
+		printf("valid trigger are: heartbeat, timer, none, oneshot, default-on\n");
+	}
+	else{
+		//check each of the argument
+		if(strcmp(arg_Array[1],"trigger")==0){
+			process_trigger(arg_Array[2]);
+		}
+		else{
+			printf("Invalid control");
+			printf("Valid control are: trigger");
+		}
+
+
+	}
+
+
+	return 0;
+}

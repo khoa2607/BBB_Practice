@@ -1,0 +1,125 @@
+#!/usr/bin/python
+#===============================================================================
+#** Program Usage: **
+'''
+gwBBB  LED-OFF       led#
+gwBBB  LED-ON        led#
+gwBBB  GPIO-RD       pin#
+gwBBB  GPIO-OFF      pin#
+gwBBB  GPIO-ON       pin#
+gwBBB  PWM-OFF       pin#
+gwBBB  PWM-ON        pin#   duty    f_Hz
+gwBBB  I2C-SCAN      i2cBus
+gwBBB  I2C-RD        i2cBus i2cAddr devAddr
+gwBBB  I2C-WR        i2cBus i2cAddr devAddr devData
+gwBBB  SPI-RD        spiNum spiBus  spiDev
+gwBBB  SPI-RESET     spiNum spiBus  spiDev
+gwBBB  SPI-WR-REFSRC spiNum spiBus  spiDev  refSrc
+gwBBB  SPI-WR-FOUT   spiNum spiBus  spiDev  f_Hz
+gwBBB  SPI-WR-POUT   spiNum spiBus  spiDev  pwr     sign
+gwBBB  SPI-TXOFF     spiNum spiBus  spiDev
+gwBBB  SPI-TXON      spiNum spiBus  spiDev
+
+Parameters:
+  led#    : {0,1,2,3}
+  pin#    :  PX_Y : X={8,9}, Y=[1,46]
+  duty    : duty cycle = [0,100]
+  f_Hz    : frequency in Hz
+  i2cBus  : {1,2} : BBB supports I2C1 & I2C2
+  i2cAddr : 7-bit slave I2C address
+  devAddr : 8-bit user-defined slave's RegAddr
+  devData : 8-bit user-defined slave's RegValue @RegAddr
+  spiNum  : {0,1} : BBB supports SPI0 & SPI1
+  spiBus  : {  1} : SPI0      = spiBus#1
+  spiDev  : {0,1} : SPI_CS0/1 = spiDev#0/1
+  refSrc  : {0,1} : {int/ext}
+  pwr     : 16-bit (dBm)
+  sign    : 0/1 = (+)/(-) pwr
+'''
+#===============================================================================
+DBG=0
+
+import sys
+import gwBBB_cfg
+import gwBBB_led
+import gwBBB_gpio
+import gwBBB_i2c
+import gwBBB_spi
+
+argc=len(sys.argv);
+argv=    sys.argv ;
+
+cmd="none"
+spi="none"
+
+if (DBG==1): print "argc = ",argc,"; argv = ",argv;
+gwBBB_cfg.checkArgv(argc,3);
+
+cmd = str(sys.argv[1]); cmd = cmd.upper();
+
+if   (cmd=="LED-OFF")      :#gwBBB LED-OFF       led#
+  gwBBB_led.LEDoff      (str(sys.argv[2]), DBG)
+elif (cmd=="LED-ON")       :#gwBBB LED-ON        led#
+  gwBBB_led.LEDon       (str(sys.argv[2]), DBG)
+elif (cmd=='GPIO-RD')      :#gwBBB GPIO-RD       pin#
+  gwBBB_gpio.GPIOrd     (str(sys.argv[2]), DBG)
+elif (cmd=='GPIO-OFF')     :#gwBBB GPIO-OFF      pin#
+  gwBBB_gpio.GPIOoff    (str(sys.argv[2]), DBG)
+elif (cmd=='GPIO-ON')      :#gwBBB GPIO-ON       pin#
+  gwBBB_gpio.GPIOon     (str(sys.argv[2]), DBG)
+elif (cmd=='PWM-OFF')      :#gwBBB PWM-OFF       pin#
+  gwBBB_gpio.PWMoff     (str(sys.argv[2]), DBG)
+elif (cmd=='PWM-ON')       :#gwBBB PWM-ON        pin#   duty    f_Hz
+  gwBBB_cfg.checkArgv(argc,5)
+  gwBBB_gpio.PWMon      (str(sys.argv[2]), str(sys.argv[3]), str(sys.argv[4]),
+                         DBG)
+elif (cmd=="I2C-SCAN")     :#gwBBB I2C-SCAN      i2cBus
+  gwBBB_i2c.I2Cscan     (str(sys.argv[2]), DBG)
+elif (cmd=="I2C-RD")       :#gwBBB I2C-RD        i2cBus i2cAddr devAddr
+  gwBBB_cfg.checkArgv(argc,5)
+  myBBB_i2c.I2Crd       (str(sys.argv[2]), str(sys.argv[3]), str(sys.argv[4]),
+                         DBG)
+elif (cmd=="I2C-WR")       :#gwBBB I2C-WR        i2cBus i2cAddr devAddr devData
+  gwBBB_cfg.checkArgv(argc,6)
+  myBBB_i2c.writeI2C    (str(sys.argv[2]), str(sys.argv[3]), str(sys.argv[4]),
+                         str(sys.argv[5]), DBG)
+elif (cmd=="SPI-RESET")    :#gwBBB SPI-RESET     spiNum spiBus  spiDev
+  gwBBB_cfg.checkArgv(argc,5)
+  gwBBB_spi.SPIcfg      (str(sys.argv[2]), str(sys.argv[3]), str(sys.argv[4]))
+  gwBBB_spi.SPIreset    (DBG)
+elif (cmd=="SPI-RD")       :#gwBBB SPI-Rd        spiNum spiBus  spiDev
+  gwBBB_cfg.checkArgv(argc,5)
+  gwBBB_spi.SPIcfg      (str(sys.argv[2]), str(sys.argv[3]), str(sys.argv[4]))
+  gwBBB_spi.SPIrd       (1)
+elif (cmd=="SPI-WR-REFSRC"):#gwBBB SPI-Wr-RefSrc spiNum spiBus  spiDev  src
+  gwBBB_cfg.checkArgv(argc,6)
+  gwBBB_spi.SPIcfg      (str(sys.argv[2]), str(sys.argv[3]), str(sys.argv[4]))
+  gwBBB_spi.SPIwr_RefSrc(str(sys.argv[5]), 1);
+elif (cmd=="SPI-WR-FOUT")  :#gwBBB SPI-Wr-Fout   spiNum spiBus  spiDev  f_Hz
+  gwBBB_cfg.checkArgv(argc,6)
+  gwBBB_spi.SPIcfg      (str(sys.argv[2]), str(sys.argv[3]), str(sys.argv[4]))
+  gwBBB_spi.SPIwr_Fout  (str(sys.argv[5]), 1);
+elif (cmd=="SPI-WR-POUT")  :#gwBBB SPI-Wr-POut   spiNum spiBus  spiDev  pwr sign
+  gwBBB_cfg.checkArgv(argc,7)
+  gwBBB_spi.SPIcfg      (str(sys.argv[2]), str(sys.argv[3]), str(sys.argv[4]))
+  gwBBB_spi.SPIwr_Pout  (str(sys.argv[5]), str(sys.argv[6]), 1);
+elif (cmd=="SPI-TXOFF")    :#gwBBB SPI-TXOFF     spiNum spiBus  spiDev
+  gwBBB_cfg.checkArgv(argc,5)
+  gwBBB_spi.SPIcfg      (str(sys.argv[2]), str(sys.argv[3]), str(sys.argv[4]))
+  gwBBB_spi.SPIwr_RfOut (0,1);
+elif (cmd=="SPI-TXON")     :#gwBBB SPI-TXON      spiNum spiBus  spiDev
+  gwBBB_cfg.checkArgv(argc,5)
+  gwBBB_spi.SPIcfg      (str(sys.argv[2]), str(sys.argv[3]), str(sys.argv[4]))
+  gwBBB_spi.SPIwr_RfOut (1,1);
+elif (cmd=="SPI-FSWEEP")   :#gwBBB SPI-FSWEEP    spiNum spiBus  spiDev
+  gwBBB_cfg.checkArgv(argc,5)
+  gwBBB_spi.SPIcfg      (str(sys.argv[2]), str(sys.argv[3]), str(sys.argv[4]))
+  gwBBB_spi.SPIwr_Fsweep(1);
+elif (cmd=="SPI-FSWEEP-OFF"):#gwBBB SPI-FSWEEP-OFF spiNum spiBus  spiDev
+  gwBBB_cfg.checkArgv(argc,5)
+  gwBBB_spi.SPIcfg      (str(sys.argv[2]), str(sys.argv[3]), str(sys.argv[4]))
+  gwBBB_spi.SPIwr_FsweepOff(1);
+else:
+  print("ERROR: cmd not supported !!!")
+sys.exit()
+#===============================================================================

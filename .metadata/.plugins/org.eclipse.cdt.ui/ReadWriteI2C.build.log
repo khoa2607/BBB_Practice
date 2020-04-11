@@ -1,0 +1,19 @@
+15:52:51 **** Incremental Build of configuration Debug for project ReadWriteI2C ****
+make all 
+Building file: ../src/TeensyTalkativeWriteRead.c
+Invoking: Cross GCC Compiler
+arm-linux-gnueabihf-gcc -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/TeensyTalkativeWriteRead.d" -MT"src/TeensyTalkativeWriteRead.o" -o "src/TeensyTalkativeWriteRead.o" "../src/TeensyTalkativeWriteRead.c"
+../src/TeensyTalkativeWriteRead.c: In function 'main':
+../src/TeensyTalkativeWriteRead.c:124:10: warning: too many arguments for format [-Wformat-extra-args]
+   printf("Device ID: %d%d, Year.Date.Month: %d%d%d%d \n",read_value[0],read_value[1],read_value[2],read_value[3],read_value[4],read_value[5],read_value[6]);
+          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Finished building: ../src/TeensyTalkativeWriteRead.c
+ 
+Building target: ReadWriteI2C
+Invoking: Cross GCC Linker
+arm-linux-gnueabihf-gcc  -o "ReadWriteI2C"  ./src/TeensyTalkativeWriteRead.o   
+Finished building target: ReadWriteI2C
+ 
+
+15:52:52 Build Finished. 0 errors, 1 warnings. (took 669ms)
+

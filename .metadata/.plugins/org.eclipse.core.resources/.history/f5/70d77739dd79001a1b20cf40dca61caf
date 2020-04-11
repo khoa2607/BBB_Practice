@@ -1,0 +1,23 @@
+import os
+
+#===============================================================================
+#** BBB I2C **
+#===============================================================================
+def I2Cscan (i2cBus, verbose):
+  i2cHandle="i2cdetect -y -r "+i2cBus
+  os.system(i2cHandle);
+  if (verbose==1): print i2cHandle
+  return 0
+
+def I2Crd (i2cBus, i2cAddr, devAddr, verbose):
+  i2cHandle="i2cget -y "+i2cBus+" "+i2cAddr+" "+devAddr
+  os.system(i2cHandle);
+  if (verbose==1): print i2cHandle
+  return 0
+
+def I2Cwr (i2cBus, i2cAddr, devAddr, devData, verbose):
+  i2cHandle="i2cset -y "+i2cBus+" "+i2cAddr+" "+devAddr+" "+devData
+  os.system(i2cHandle);
+  if (verbose==1): print i2cHandle
+  return 0
+#===============================================================================

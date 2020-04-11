@@ -1,0 +1,10 @@
+15:23:15 **** Incremental Build of configuration Debug for project manochu ****
+make all 
+'Building target: manochu'
+'Invoking: Cross GCC Linker'
+arm-linux-gnueabihf-gcc  -o "manochu"  ./src/manochu.o   
+'Finished building target: manochu'
+' '
+
+15:23:15 Build Finished. 0 errors, 0 warnings. (took 298ms)
+

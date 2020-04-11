@@ -1,0 +1,19 @@
+import Adafruit_BBIO.GPIO as GPIO
+
+#===============================================================================
+#** BBB LED **
+#===============================================================================
+def LEDoff (ledNum, verbose):
+  ledHandle="USR"+ledNum
+  if (verbose==1): print "LEDoff: ", ledHandle
+  GPIO.setup (ledHandle, GPIO.OUT)
+  GPIO.output(ledHandle, GPIO.LOW)
+  return 0
+
+def LEDon (ledNum, verbose):
+  ledHandle="USR"+ledNum
+  if (verbose==1): print "LEDon: ", ledHandle
+  GPIO.setup (ledHandle, GPIO.OUT)
+  GPIO.output(ledHandle, GPIO.HIGH)
+  return 0
+#===============================================================================

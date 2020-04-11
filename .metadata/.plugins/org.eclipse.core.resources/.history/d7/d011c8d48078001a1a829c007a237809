@@ -1,0 +1,278 @@
+/*
+ ============================================================================
+ Name        : Couter_7Segment.c
+ Author      : Khoa Le
+ Version     :
+ Copyright   : Your copyright notice
+ Description : 7 Segment Project - begininer
+ ============================================================================
+ */
+/*
+ * connection From 7 Segment to BBB
+ *
+ * Pin				pin_name_BBB		pin_mode		pin_kernel
+ * A 				 P8_18				gpio2[1]		gpio65
+ * B				 P8_8				gpio2[3]		gpio67
+ * C				 P8_9				gpio2[5]		gpio69
+ * DP				 P8_10				gpio2[4]		gpio68
+ * D				 P8_11				gpio1[13]		gpio45
+ * E				 P8_12				gpio0[12]		gpio44
+ * F				 P8_14				gpio0[26]		gpio26
+ * G				 P8_16				gpio1[14]		gpio46
+ *
+ */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <fcntl.h> //for open
+#include <unistd.h> //for close
+
+#include <string.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+
+#define GPIO_66_P8_7_A 65
+#define GPIO_67_P8_8_B 67
+#define GPIO_69_P8_9_C 69
+#define GPIO_68_P8_10_DP 68
+#define GPIO_45_P8_11_D 45
+#define GPIO_44_P8_12_E 44
+#define GPIO_26_P8_14_F 26
+#define GPIO_46_P8_16_G 46
+
+#define HIGH 1
+#define LOW  0
+
+#define OUT HIGH
+#define IN  0
+
+#define PATH	"/sys/class/gpio"
+
+//access /sys/class/gpio/gpio#/direction to change to in or out
+//1 == out , 0 == in
+int gpio_direction(uint8_t number, uint8_t direction) {
+
+
+	int fd;
+	char buf[100];
+
+	//concatenate the string, then save to this buffer
+	snprintf(buf,sizeof(buf),PATH"/gpio%d/direction",number);
+
+	//open this path with write only mod
+	fd = open(buf,O_WRONLY);
+
+	if (fd <=0){
+		perror("gpio# direction configure wrong \n");
+		return -1;
+	}
+
+
+	//configure the direction based on user chosen
+	if(direction == 1){
+		write(fd, "out",4);
+	}
+	else if(direction == 0){
+		write(fd, "in",3);
+	}
+	else{
+		perror("invalid direction");
+	}
+	close(fd);
+	return 0;
+}
+
+//acc /sys/class/gpio/gpio#/value to initialize HIGH or LOW of the LED
+
+int gpio_value(uint8_t number, uint8_t value){
+
+	int fd =0;
+	char buf[100];
+
+	//concatenate the string of path
+	snprintf(buf, sizeof(buf),PATH"/gpio%d/value", number);
+
+	//open the descriptor for the path
+	fd = open(buf,O_WRONLY);
+	if(fd<=0){
+		perror("gpio# configure wrong");
+		return -1;
+	}
+
+	//write the value of the LED to value folder
+	if(value == 1){
+		write(fd, "1", 2);
+	}
+	else{
+		write(fd, "0", 2);
+	}
+	close(fd);
+	return 0;
+}
+
+//initalize the gpio
+int initialize_gpio(void){
+	/*
+	 * initialize GPIO to OUTPUT MODE
+	 * write value 0 to turn off all the gpio first.
+	 */
+
+	gpio_direction(GPIO_66_P8_7_A, OUT);
+	gpio_value(GPIO_66_P8_7_A,LOW);
+
+	gpio_direction(GPIO_67_P8_8_B, OUT);
+	gpio_value(GPIO_67_P8_8_B,LOW);
+
+	gpio_direction(GPIO_69_P8_9_C, OUT);
+	gpio_value(GPIO_69_P8_9_C,LOW);
+
+	gpio_direction(GPIO_68_P8_10_DP, OUT);
+	gpio_value(GPIO_68_P8_10_DP,LOW);
+
+	gpio_direction(GPIO_45_P8_11_D, OUT);
+	gpio_value(GPIO_45_P8_11_D,LOW);
+
+	gpio_direction(GPIO_44_P8_12_E, OUT);
+	gpio_value(GPIO_44_P8_12_E,LOW);
+
+	gpio_direction(GPIO_26_P8_14_F, OUT);
+	gpio_value(GPIO_26_P8_14_F,LOW);
+
+	gpio_direction(GPIO_46_P8_16_G, OUT);
+	gpio_value(GPIO_46_P8_16_G,LOW);
+
+	return 0;
+}
+
+
+
+
+
+void nunber_7Segment(uint8_t numberToDisplay){
+/*
+#define GPIO_66_P8_7_A 66
+#define GPIO_67_P8_8_B 67
+#define GPIO_69_P8_9_C 69
+#define GPIO_68_P8_10_DP 68
+#define GPIO_45_P8_11_D 45
+#define GPIO_44_P8_12_E 44
+#define GPIO_26_P8_14_F 26
+#define GPIO_46_P8_16_G 46
+ */
+
+	switch(numberToDisplay){
+
+	case 0:
+		gpio_value(GPIO_66_P8_7_A,HIGH);
+		gpio_value(GPIO_67_P8_8_B,HIGH);
+		gpio_value(GPIO_69_P8_9_C,HIGH);
+		gpio_value(GPIO_45_P8_11_D,HIGH);
+		gpio_value(GPIO_44_P8_12_E,HIGH);
+		gpio_value(GPIO_26_P8_14_F,HIGH);
+		gpio_value(GPIO_46_P8_16_G,LOW);
+	break;
+	case 1:
+		gpio_value(GPIO_66_P8_7_A,LOW);
+		gpio_value(GPIO_67_P8_8_B,HIGH);
+		gpio_value(GPIO_69_P8_9_C,HIGH);
+		gpio_value(GPIO_45_P8_11_D,LOW);
+		gpio_value(GPIO_44_P8_12_E,LOW);
+		gpio_value(GPIO_26_P8_14_F,LOW);
+		gpio_value(GPIO_46_P8_16_G,LOW);
+	break;
+	case 2:
+		gpio_value(GPIO_66_P8_7_A,HIGH);
+		gpio_value(GPIO_67_P8_8_B,HIGH);
+		gpio_value(GPIO_69_P8_9_C,LOW);
+		gpio_value(GPIO_45_P8_11_D,HIGH);
+		gpio_value(GPIO_44_P8_12_E,HIGH);
+		gpio_value(GPIO_26_P8_14_F,LOW);
+		gpio_value(GPIO_46_P8_16_G,HIGH);
+	break;
+	case 3:
+		gpio_value(GPIO_66_P8_7_A,HIGH);
+		gpio_value(GPIO_67_P8_8_B,HIGH);
+		gpio_value(GPIO_69_P8_9_C,HIGH);
+		gpio_value(GPIO_45_P8_11_D,HIGH);
+		gpio_value(GPIO_44_P8_12_E,LOW);
+		gpio_value(GPIO_26_P8_14_F,LOW);
+		gpio_value(GPIO_46_P8_16_G,HIGH);
+	break;
+	case 4:
+		gpio_value(GPIO_66_P8_7_A,LOW);
+		gpio_value(GPIO_67_P8_8_B,HIGH);
+		gpio_value(GPIO_69_P8_9_C,HIGH);
+		gpio_value(GPIO_45_P8_11_D,LOW);
+		gpio_value(GPIO_44_P8_12_E,LOW);
+		gpio_value(GPIO_26_P8_14_F,HIGH);
+		gpio_value(GPIO_46_P8_16_G,HIGH);
+	break;
+	case 5:
+		gpio_value(GPIO_66_P8_7_A,HIGH);
+		gpio_value(GPIO_67_P8_8_B,LOW);
+		gpio_value(GPIO_69_P8_9_C,HIGH);
+		gpio_value(GPIO_45_P8_11_D,LOW);
+		gpio_value(GPIO_44_P8_12_E,LOW);
+		gpio_value(GPIO_26_P8_14_F,HIGH);
+		gpio_value(GPIO_46_P8_16_G,HIGH);
+	break;
+	case 6:
+		gpio_value(GPIO_66_P8_7_A,LOW);
+		gpio_value(GPIO_67_P8_8_B,LOW);
+		gpio_value(GPIO_69_P8_9_C,HIGH);
+		gpio_value(GPIO_45_P8_11_D,HIGH);
+		gpio_value(GPIO_44_P8_12_E,HIGH);
+		gpio_value(GPIO_26_P8_14_F,HIGH);
+		gpio_value(GPIO_46_P8_16_G,HIGH);
+	break;
+	case 7:
+		gpio_value(GPIO_66_P8_7_A,HIGH);
+		gpio_value(GPIO_67_P8_8_B,HIGH);
+		gpio_value(GPIO_69_P8_9_C,HIGH);
+		gpio_value(GPIO_45_P8_11_D,LOW);
+		gpio_value(GPIO_44_P8_12_E,LOW);
+		gpio_value(GPIO_26_P8_14_F,LOW);
+		gpio_value(GPIO_46_P8_16_G,LOW);
+	break;
+	case 8:
+		gpio_value(GPIO_66_P8_7_A,HIGH);
+		gpio_value(GPIO_67_P8_8_B,HIGH);
+		gpio_value(GPIO_69_P8_9_C,HIGH);
+		gpio_value(GPIO_45_P8_11_D,HIGH);
+		gpio_value(GPIO_44_P8_12_E,HIGH);
+		gpio_value(GPIO_26_P8_14_F,HIGH);
+		gpio_value(GPIO_46_P8_16_G,HIGH);
+	break;
+	case 9:
+		gpio_value(GPIO_66_P8_7_A,HIGH);
+		gpio_value(GPIO_67_P8_8_B,HIGH);
+		gpio_value(GPIO_69_P8_9_C,HIGH);
+		gpio_value(GPIO_45_P8_11_D,HIGH);
+		gpio_value(GPIO_44_P8_12_E,LOW);
+		gpio_value(GPIO_26_P8_14_F,HIGH);
+		gpio_value(GPIO_46_P8_16_G,HIGH);
+	break;
+	}
+}
+
+
+//couter up only
+int main(void) {
+
+	int i =0;
+	if(initialize_gpio() <0){
+		perror("initialize_gpio fail");
+	}
+	else{
+		printf("Start counting up \n");
+		while(1){
+			for( i=0;i<10;i++){
+
+				nunber_7Segment(i);
+				usleep(500000);
+			}
+		}
+	}
+
+}

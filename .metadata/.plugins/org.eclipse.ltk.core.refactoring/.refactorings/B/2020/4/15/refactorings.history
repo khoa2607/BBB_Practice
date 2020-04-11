@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;B/src/SimpleGPIO.h.txt&apos; to &apos;SimpleGPIO.h&apos;" description="Rename resource &apos;SimpleGPIO.h.txt&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="src/SimpleGPIO.h.txt" name="SimpleGPIO.h" stamp="1586571346337" updateReferences="true"/>
+</session>

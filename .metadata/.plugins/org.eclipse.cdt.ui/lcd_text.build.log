@@ -1,0 +1,14 @@
+15:01:06 **** Build of configuration Debug for project lcd_text ****
+make all 
+'Building file: D:/1 Embedded-Linux-Black/EmbeddedLinuxBBB-master/Project_Src/Drivers/lcd/lcd_driver.c'
+'Invoking: Cross GCC Compiler'
+arm-linux-gnueabihf-gcc -I"E:\fastBit\courses\embedded_linux\EmbeddedLinuxBBB\Project_Src\Drivers\gpio" -I"E:\fastBit\courses\embedded_linux\EmbeddedLinuxBBB\Project_Src\Drivers\lcd" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/lcd_driver.d" -MT"src/lcd_driver.d" -o "src/lcd_driver.o" "D:/1 Embedded-Linux-Black/EmbeddedLinuxBBB-master/Project_Src/Drivers/lcd/lcd_driver.c"
+D:/1 Embedded-Linux-Black/EmbeddedLinuxBBB-master/Project_Src/Drivers/lcd/lcd_driver.c:8:25: fatal error: gpio_driver.h: No such file or directory
+ #include "gpio_driver.h"
+                         ^
+compilation terminated.
+make: *** [src/lcd_driver.o] Error 1
+"make all" terminated with exit code 2. Build might be incomplete.
+
+15:01:06 Build Failed. 2 errors, 0 warnings. (took 249ms)
+

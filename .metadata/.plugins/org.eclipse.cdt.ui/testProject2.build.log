@@ -1,0 +1,12 @@
+14:28:04 **** Incremental Build of configuration Debug for project testProject2 ****
+make all 
+'Building file: ../src/testProject2.c'
+'Invoking: Cross GCC Compiler'
+arm-linux-gnueabihf-gcc -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/testProject2.d" -MT"src/testProject2.o" -o "src/testProject2.o" "../src/testProject2.c"
+'arm-linux-gnueabihf-gcc' is not recognized as an internal or external command,
+operable program or batch file.
+make: *** [src/testProject2.o] Error 1
+"make all" terminated with exit code 2. Build might be incomplete.
+
+14:28:05 Build Failed. 1 errors, 0 warnings. (took 215ms)
+

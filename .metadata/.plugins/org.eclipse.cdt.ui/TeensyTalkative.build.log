@@ -1,0 +1,10 @@
+17:13:13 **** Incremental Build of configuration Debug for project TeensyTalkative ****
+make all 
+'Building target: TeensyTalkative'
+'Invoking: Cross GCC Linker'
+arm-linux-gnueabihf-gcc  -o "TeensyTalkative"  ./src/TeensyTalkative.o   
+'Finished building target: TeensyTalkative'
+' '
+
+17:13:14 Build Finished. 0 errors, 0 warnings. (took 297ms)
+

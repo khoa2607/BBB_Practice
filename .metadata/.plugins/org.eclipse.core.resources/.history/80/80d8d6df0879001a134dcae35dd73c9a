@@ -1,0 +1,191 @@
+/*
+ ============================================================================
+ Name        : I2C_Test.c
+ Author      : Khoa Le
+ Version     :
+ Copyright   : Your copyright notice
+ Description : Using MPU6050 accelerometer and Gyroscope to test the I2C communication
+ ============================================================================
+ */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <fcntl.h> //OPEN
+#include <stdint.h> //FOR UNSIGNED INT
+
+#include <linux/i2c-dev.h> //for slave in i2c interface in terminal
+#include <sys/ioctl.h> //ioctl to configure I/O in kernel
+
+#include <unistd.h>
+
+//define some of the variable
+
+/*GYROSCOPE SENSITIVITY BY FULL SCALE RANGE  */
+#define FS_GYRO_0 0
+#define FS_GYRO_1 1
+#define FS_GYRO_2 2
+#define FS_GYRO_3 3
+
+#define FS_GYRO_0_FROMRAW 131
+#define FS_GYRO_1_FROMRAW 65.5
+#define FS_GYRO_2_FROMRAW 32.8
+#define FS_GYRO_3_FROMRAW 16.4
+
+#define GYRO_BASE_ADDR 0x1B
+
+#define MPU6050_REG_GYRO_X_HIGH          0x43
+#define MPU6050_REG_GYRO_X_LOW           0x44
+#define MPU6050_REG_GYRO_Y_HIGH          0x45
+#define MPU6050_REG_GYRO_Y_LOW           0x46
+#define MPU6050_REG_GYRO_Z_HIGH          0x47
+#define MPU6050_REG_GYRO_Z_LOW           0x48
+
+/*ACCELEROMETER SENSITIVITY BY FULL SCALE RANGE  */
+#define FS_ACC_0 0
+#define FS_ACC_1 1
+#define FS_GYRO_2 2
+#define FS_GYRO_3 3
+
+#define FS_ACC_0_FROMRAW 16384
+#define FS_ACC_1_FROMRAW 8192
+#define FS_ACC_2_FROMRAW 4096
+#define FS_ACC_3_FROMRAW 2048
+
+#define ACC_BASE_ADDR 0x1C
+
+#define MPU6050_REG_ACC_X_HIGH          0x3B
+#define MPU6050_REG_ACC_X_LOW           0x3C
+#define MPU6050_REG_ACC_Y_HIGH          0x3D
+#define MPU6050_REG_ACC_Y_LOW           0x3E
+#define MPU6050_REG_ACC_Z_HIGH          0x3F
+#define MPU6050_REG_ACC_Z_LOW           0x40
+
+//other variables
+#define PATH "/dev/i2c-2"
+
+//slave address b110100X ->  b 0110 1000 -> 68
+#define SLAVE_ADDR 0x68
+
+int fd; //open descriptor
+
+int write_data(uint8_t base_addr, uint8_t data){
+
+	int ret;
+	char buf[2];
+	buf[0] = base_addr;
+	buf[1] = data;
+
+	ret = write(fd,buf,2);
+	if(ret <=0){
+		perror("write fail!!");
+		return -1;
+	}
+	return 0;
+}
+
+//read from what address,
+int read_data(uint8_t base_addr,char *buffer, uint32_t len){
+
+	int ret;
+	char buf[2];
+	buf[0] = base_addr;
+
+	//start to write first
+	ret = write(fd,buf,2);
+	if(ret<=0){
+		perror("Write fail!!");
+		return -1;
+	}
+
+	//then read
+	ret = read(fd,buffer,len);
+	if (ret<=0){
+		perror("read fail");
+		return -1;
+	}
+	return 0;
+}
+
+void initialize(){
+
+	//reset the address of the all registers
+	//gyro
+	write_data(GYRO_BASE_ADDR,0x00);
+	usleep(1000);
+	//acce
+	write_data(ACC_BASE_ADDR,0x00);
+	usleep(1000);
+}
+
+void read_acc(short int *buffer){
+
+	char buf[6];
+
+	read_data(GYRO_BASE_ADDR,buf,6);
+
+	buffer[0] = (int)(buf[0] <<8 | buf[1] );
+	buffer[1] = (int)(buf[2] <<8 | buf[3] );
+	buffer[2] = (int)(buf[4] <<8 | buf[5] );
+
+}
+
+void read_gyro(short int *buffer){
+
+	char buf[6];
+
+	read_data(MPU6050_REG_ACC_X_HIGH,buf,6);
+
+	buffer[0] = (int)(buf[0] <<8 | buf[1] );
+	buffer[1] = (int)(buf[2] <<8 | buf[3] );
+	buffer[2] = (int)(buf[4] <<8 | buf[5] );
+
+}
+
+
+int main(void) {
+
+	//create soeme variables, each x,y,z measure High and Low ( 2 bytes)
+	//each value will have 0xABCD
+	short acc_value[3], gyro_value[3];
+
+	//access i2c folder
+	fd = open(PATH,O_RDONLY);
+	if(fd <0){
+		perror("open path to i2c wrong-please check path /dev/i2c-c\n");
+		return -1;
+	}
+
+	//specify the address that wants to communicate
+	if(ioctl(fd,I2C_SLAVE,SLAVE_ADDR)<0){
+		perror("Communicate between slave and master(controller)! - could be I2C_SLAVE address is wrong! \n");
+		return -1;
+	}
+
+	double accx,accy,accz,gyrox,gyroy,gyroz;
+    /*Convert acc raw values in to 'g' values*/
+    accx = (double) acc_value[0]/FS_ACC_3_FROMRAW;
+    accy = (double) acc_value[1]/FS_ACC_3_FROMRAW;
+    accz = (double) acc_value[2]/FS_ACC_3_FROMRAW;
+
+    /* Convert gyro raw values in to  "�/s" (deg/seconds) */
+    gyrox = (double) gyro_value[0]/FS_GYRO_3_FROMRAW;
+    gyroy = (double) gyro_value[1]/FS_GYRO_3_FROMRAW;
+    gyroz = (double) gyro_value[2]/FS_GYRO_3_FROMRAW;
+
+	initialize();
+	while(1){
+		read_acc(acc_value);
+		read_gyro(gyro_value);
+
+		printf("ACCelerometer:\n RAW: X%d, Y% , Z%:\n GYROscope:\n RAW: X%d, Y% , Z%:\n  ", acc_value[0],acc_value[1],acc_value[2],gyro_value[0],gyro_value[1],gyro_value[2]);
+
+		printf("ACCelerometer:\n (g): X%d, Y% , Z%:\n GYROscope:\n (deg/s): X%d, Y% , Z%:\n  ", acc_value[0],acc_value[1],acc_value[2],gyro_value[0],gyro_value[1],gyro_value[2]);
+
+		usleep(500*1000);
+	}
+
+
+
+
+	return 0;
+}

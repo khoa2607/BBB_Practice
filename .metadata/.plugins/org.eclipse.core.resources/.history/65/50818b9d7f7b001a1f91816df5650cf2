@@ -1,0 +1,33 @@
+#include<stdio.h>
+#include<fcntl.h>
+#include<unistd.h>
+#include<sys/ioctl.h>
+#include<stdint.h>
+#include<linux/spi/spidev.h>
+#define SPI_PATH "/dev/spidev1.0"
+
+int main(){
+unsigned int fd, i=0; // file handle and loop counter
+char a=112;
+
+uint8_t bits = 8, mode = 0; // 8-bits per word, SPI mode 3
+uint32_t speed = 10000; // Speed is 1 MHz
+// The following calls set up the SPI bus properties
+fd = open(SPI_PATH, O_RDWR);
+ioctl(fd, SPI_IOC_WR_MODE, &mode);
+ioctl(fd, SPI_IOC_RD_MODE, &mode);
+ioctl(fd, SPI_IOC_WR_BITS_PER_WORD, &bits);
+ioctl(fd, SPI_IOC_RD_BITS_PER_WORD, &bits);
+ioctl(fd, SPI_IOC_WR_MAX_SPEED_HZ, &speed);
+ioctl(fd, SPI_IOC_RD_MAX_SPEED_HZ, &speed);
+
+write(fd,&a,1); // write a single a character
+fflush(stdout); // need to flush the output, as no
+
+
+
+close(fd); // close the file
+return 0;
+}
+
+

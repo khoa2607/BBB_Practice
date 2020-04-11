@@ -1,0 +1,17 @@
+/*
+ ============================================================================
+ Name        : SPI.c
+ Author      : Khoa Le
+ Version     :
+ Copyright   : Your copyright notice
+ Description : Hello World in C, Ansi-style
+ ============================================================================
+ */
+
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(void) {
+	puts("7Segment"); /* prints 7Segment */
+	return EXIT_SUCCESS;
+}

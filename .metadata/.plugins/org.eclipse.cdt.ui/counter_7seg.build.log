@@ -1,0 +1,10 @@
+23:28:26 **** Incremental Build of configuration Debug for project counter_7seg ****
+make all 
+'Building target: counter_7seg'
+'Invoking: Cross GCC Linker'
+arm-linux-gnueabihf-gcc  -o "counter_7seg"  ./src/counter_7seg.o   
+'Finished building target: counter_7seg'
+' '
+
+23:28:26 Build Finished. 0 errors, 0 warnings. (took 306ms)
+

@@ -1,0 +1,68 @@
+/*
+ ============================================================================
+ Name        : Couter_7Segment.c
+ Author      : Khoa Le
+ Version     :
+ Copyright   : Your copyright notice
+ Description : 7 Segment Project - begininer
+ ============================================================================
+ */
+/*
+ * connection From 7 Segment to BBB
+ *
+ * Pin				pin_name_BBB		pin_mode		pin_kernel
+ * A 				 P8_7				gpio2[2]		gpio66
+ * B				 P8_8				gpio2[3]		gpio67
+ * C				 P8_9				gpio2[5]		gpio69
+ * DP				 P8_10				gpio2[4]		gpio68
+ * D				 P8_11				gpio1[13]		gpio45
+ * E				 P8_12				gpio0[12]		gpio44
+ * F				 P8_14				gpio0[26]		gpio26
+ * G				 P8_16				gpio1[14]		gpio46
+ *
+ */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <fcntl.h>
+
+#include <unistd.h>
+
+#define GPIO_66_P8_7_A 66
+#define GPIO_67_P8_8_B 67
+#define GPIO_66_P8_9_C 69
+#define GPIO_66_P8_10_DP 68
+#define GPIO_66_P8_11_D 45
+#define GPIO_66_P8_12_E 44
+#define GPIO_66_P8_14_F 26
+
+
+
+#define PATH	"/sys/class/gpio"
+
+//access /sys/class/gpio/gpio#/direction to change to in or out
+
+int gpio_direction(uint8_t number){
+
+
+	int fd;
+	char buf[100];
+
+	//concatenate the string, then save to this buffer
+	snprintf(buf,sizeof(buf),PATH"/gpio%d/direction",number);
+
+	//open this path with write only mod
+	fd = open(buf,O_WONLY);
+
+
+
+
+	return 0;
+}
+
+
+int main(void) {
+
+
+}

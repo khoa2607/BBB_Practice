@@ -1,0 +1,15 @@
+16:59:22 **** Incremental Build of configuration Debug for project SPI_Teensy ****
+make all 
+Building file: ../src/SPI_Teensy.c
+Invoking: Cross GCC Compiler
+arm-linux-gnueabihf-gcc -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/SPI_Teensy.d" -MT"src/SPI_Teensy.o" -o "src/SPI_Teensy.o" "../src/SPI_Teensy.c"
+Finished building: ../src/SPI_Teensy.c
+ 
+Building target: SPI_Teensy
+Invoking: Cross GCC Linker
+arm-linux-gnueabihf-gcc  -o "SPI_Teensy"  ./src/SPI_Teensy.o   
+Finished building target: SPI_Teensy
+ 
+
+16:59:23 Build Finished. 0 errors, 0 warnings. (took 666ms)
+

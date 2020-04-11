@@ -1,0 +1,11 @@
+00:29:49 **** Clean-only build of configuration Debug for project MPU6050_raw_read ****
+make clean 
+rm -rf  ./mpu6050_rawread.o  ./mpu6050_rawread.d  MPU6050_raw_read
+process_begin: CreateProcess(NULL, rm -rf ./mpu6050_rawread.o ./mpu6050_rawread.d MPU6050_raw_read, ...) failed.
+make (e=2): The system cannot find the file specified.
+
+make: [makefile:37: clean] Error 2 (ignored)
+' '
+
+00:29:50 Build Finished. 0 errors, 0 warnings. (took 290ms)
+

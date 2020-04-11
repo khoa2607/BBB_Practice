@@ -1,0 +1,6 @@
+15:01:04 **** Build of configuration Debug for project 4_digit_7seg ****
+make all 
+make: Nothing to be done for `all'.
+
+15:01:04 Build Finished. 0 errors, 0 warnings. (took 96ms)
+

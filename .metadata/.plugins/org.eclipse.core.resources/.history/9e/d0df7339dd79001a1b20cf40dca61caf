@@ -1,0 +1,9 @@
+import sys
+
+#===============================================================================
+def checkArgv(argc, argcRequired):
+  if (argc<argcRequired):
+    print "ERROR: Insufficient argvs !!!"
+    sys.exit()
+  return 0
+#===============================================================================

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;BBB_Khoa_Beginer/src/A.c&apos; to &apos;User_Khoa.c&apos;" description="Rename resource &apos;A.c&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="src/A.c" name="User_Khoa.c" stamp="1586201863855" updateReferences="true"/>
+</session>

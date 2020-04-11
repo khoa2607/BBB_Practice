@@ -1,0 +1,6 @@
+15:01:05 **** Build of configuration Debug for project eeprom_read ****
+make all 
+make: Nothing to be done for `all'.
+
+15:01:05 Build Finished. 0 errors, 0 warnings. (took 94ms)
+

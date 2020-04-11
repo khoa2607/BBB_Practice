@@ -1,0 +1,50 @@
+/*
+ ============================================================================
+ Name        : I2C_Test.c
+ Author      : Khoa Le
+ Version     :
+ Copyright   : Your copyright notice
+ Description : Using MPU6050 accelerometer and Gyroscope to test the I2C communication
+ ============================================================================
+ */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <fnctl.h>
+
+#include <unistd.h>
+
+//define some of the variable
+
+/*GYROSCOPE SENSITIVITY BY FULL SCALE RANGE  */
+#define FS_GYRO_0 0
+#define FS_GYRO_1 1
+#define FS_GYRO_2 2
+#define FS_GYRO_3 3
+
+#define FS_GYRO_0_FROMRAW 131
+#define FS_GYRO_1_FROMRAW 65.5
+#define FS_GYRO_2_FROMRAW 32.8
+#define FS_GYRO_3_FROMRAW 16.4
+
+/*ACCELEROMETER SENSITIVITY BY FULL SCALE RANGE  */
+#define FS_ACC_0 0
+#define FS_ACC_1 1
+#define FS_GYRO_2 2
+#define FS_GYRO_3 3
+
+#define FS_ACC_0_FROMRAW 16384
+#define FS_ACC_1_FROMRAW 8192
+#define FS_ACC_2_FROMRAW 4096
+#define FS_ACC_3_FROMRAW 2048
+
+#define PATH "/dev/i2c-2"
+
+int main(void) {
+
+	int fd;
+	//access i2c folder
+	fd = open(PATH,O_RDONLY);
+
+	return 0;
+}

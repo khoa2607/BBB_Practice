@@ -1,0 +1,15 @@
+13:15:22 **** Incremental Build of configuration Debug for project SPI ****
+make all 
+Building file: ../src/spidev_test.c
+Invoking: Cross GCC Compiler
+arm-linux-gnueabihf-gcc -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/spidev_test.d" -MT"src/spidev_test.o" -o "src/spidev_test.o" "../src/spidev_test.c"
+Finished building: ../src/spidev_test.c
+ 
+Building target: SPI
+Invoking: Cross GCC Linker
+arm-linux-gnueabihf-gcc  -o "SPI"  ./src/spidev_test.o   
+Finished building target: SPI
+ 
+
+13:15:22 Build Finished. 0 errors, 0 warnings. (took 693ms)
+

@@ -1,0 +1,83 @@
+/*
+ ============================================================================
+ Name        : I2C_Test.c
+ Author      : Khoa Le
+ Version     :
+ Copyright   : Your copyright notice
+ Description : Using MPU6050 accelerometer and Gyroscope to test the I2C communication
+ ============================================================================
+ */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <stdint.h>
+
+#include <unistd.h>
+
+//define some of the variable
+
+/*GYROSCOPE SENSITIVITY BY FULL SCALE RANGE  */
+#define FS_GYRO_0 0
+#define FS_GYRO_1 1
+#define FS_GYRO_2 2
+#define FS_GYRO_3 3
+
+#define FS_GYRO_0_FROMRAW 131
+#define FS_GYRO_1_FROMRAW 65.5
+#define FS_GYRO_2_FROMRAW 32.8
+#define FS_GYRO_3_FROMRAW 16.4
+
+/*ACCELEROMETER SENSITIVITY BY FULL SCALE RANGE  */
+#define FS_ACC_0 0
+#define FS_ACC_1 1
+#define FS_GYRO_2 2
+#define FS_GYRO_3 3
+
+#define FS_ACC_0_FROMRAW 16384
+#define FS_ACC_1_FROMRAW 8192
+#define FS_ACC_2_FROMRAW 4096
+#define FS_ACC_3_FROMRAW 2048
+
+#define PATH "/dev/i2c-2"
+
+//slave address b110100X ->  b 0110 1000 -> 68
+#define SLAVE_ADDR 0x68
+
+int fd;
+
+int write_data(uint8_t addr, uint8_t data){
+
+	int ret;
+	char buf[2];
+
+	ret = write(fd,buf,2);
+	if(ret <=0){
+		perror("write fail!!");
+		return -1;
+	}
+	return 0;
+}
+
+
+void initialize(){
+
+	//reset the address of the all registers
+
+}
+
+
+int main(void) {
+
+	//access i2c folder
+	fd = open(PATH,O_RDONLY);
+	if(fd <0){
+		perror("open path to i2c wrong-please check path /dev/i2c-c\n");
+		return -1;
+	}
+
+
+
+
+	return 0;
+}

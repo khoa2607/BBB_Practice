@@ -1,0 +1,5 @@
+eclipse.preferences.version=1
+org.eclipse.rse.internal.ui.view.SystemViewSubSystemAdapter\:org.eclipse.rse.ui.view.SystemTableView=org.eclipse.rse.ui.userid;org.eclipse.rse.ui.port;org.eclipse.rse.ui.connected;org.eclipse.rse.ui.vrm
+org.eclipse.rse.preferences.order.connections=DESKTOP-P2HSJK7.Local;DESKTOP-P2HSJK7.BBB
+org.eclipse.rse.preferences.verify.connection=false
+org.eclipse.rse.shells.ui.view.SystemViewRemoteOutputAdapter\:org.eclipse.rse.shells.ui.view.SystemCommandsView=null

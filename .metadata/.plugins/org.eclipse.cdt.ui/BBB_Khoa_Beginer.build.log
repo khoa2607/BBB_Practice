@@ -1,0 +1,15 @@
+17:03:12 **** Build of configuration Debug for project BBB_Khoa_Beginer ****
+make all 
+'Building file: ../src/User_Khoa.c'
+'Invoking: Cross GCC Compiler'
+arm-linux-gnueabihf-gcc -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/User_Khoa.d" -MT"src/User_Khoa.o" -o "src/User_Khoa.o" "../src/User_Khoa.c"
+'Finished building: ../src/User_Khoa.c'
+' '
+'Building target: BBB_Khoa_Beginer'
+'Invoking: Cross GCC Linker'
+arm-linux-gnueabihf-gcc  -o "BBB_Khoa_Beginer"  ./src/User_Khoa.o   
+'Finished building target: BBB_Khoa_Beginer'
+' '
+
+17:03:13 Build Finished. 0 errors, 0 warnings. (took 449ms)
+

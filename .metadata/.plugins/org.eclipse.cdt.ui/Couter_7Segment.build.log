@@ -1,0 +1,15 @@
+23:35:39 **** Incremental Build of configuration Debug for project Couter_7Segment ****
+make all 
+'Building file: ../src/Couter_7Segment.c'
+'Invoking: Cross GCC Compiler'
+arm-linux-gnueabihf-gcc -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/Couter_7Segment.d" -MT"src/Couter_7Segment.o" -o "src/Couter_7Segment.o" "../src/Couter_7Segment.c"
+'Finished building: ../src/Couter_7Segment.c'
+' '
+'Building target: Couter_7Segment'
+'Invoking: Cross GCC Linker'
+arm-linux-gnueabihf-gcc  -o "Couter_7Segment"  ./src/Couter_7Segment.o   
+'Finished building target: Couter_7Segment'
+' '
+
+23:35:39 Build Finished. 0 errors, 0 warnings. (took 618ms)
+

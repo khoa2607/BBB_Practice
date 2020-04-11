@@ -1,0 +1,56 @@
+/*
+ ============================================================================
+ Name        : A.c
+ Author      : Khoa Le
+ Version     :
+ Copyright   : Your copyright notice
+ Description : Hello World in C, Ansi-style
+ ============================================================================
+ */
+
+#include <stdio.h>
+#include <stdlib.h>
+
+
+
+//process trigger
+void process_trigger(char *value){
+
+
+}
+
+
+
+
+
+//pass argument to folder brightness or trigger
+int main(int args, char arg_Array[]) {
+
+	printf("Choose which LED you want to control!");
+	if(args != 3){ //should 3 arguments: file, led mode, led brightness
+		printf("usage %s<control option> <value> \n ", arg_Array[0]);
+		printf("valid control options are: brightness, trigger \n");
+		printf("valid brightness is 0 or 1 \n");
+		printf("valid trigger are: heartbeat, timer, none, oneshot, default-on\n");
+	}
+	else{
+		//check each of the argument
+		if(strcmp(arg_Array[1],"trigger")==0){
+			process_trigger(arg_Array[2]);
+		}
+		else if(strcmp(arg_Array[1],"brightness")==0){
+			//convert string into integer
+			int value = atoi(arg_Array[2]);
+			process_brightness(arg_Array[2]);
+		}
+		else{
+			printf("Invalid control");
+			printf("Valid control are: Brightness, trigger");
+		}
+
+
+	}
+
+
+	return 0;
+}

@@ -1,0 +1,100 @@
+/*
+ ============================================================================
+ Name        : SPI_Teensy.c
+ Author      : Khoa Le
+ Version     :
+ Copyright   : Your copyright notice
+ Description : Hello World in C, Ansi-style
+ ============================================================================
+ */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <stdint.h>
+
+#include <sys/ioctl.h>
+#include <linux/spi/spidev.h>
+
+//define some constant variables
+#define PATH "/dev/spidev2.0"
+
+static	uint16_t delay =0;
+static	uint32_t speed = 500000;
+static uint8_t bits = 8;
+static uint8_t mode = 0;
+
+void write_data(int fd){
+
+	int ret;
+	uint8_t tx[] = {0x0A};
+	uint8_t rx[ARRAY_SIZE(tx)]={0,}; //zero out
+
+
+
+	struct spi_ioc_transfer tr ={
+		.tx_buf = (unsigned long) tx,
+		.rx_buf = (unsigned long) rx,
+		.len = ARRAY_SIZE(tx),
+		.delay_usecs = delay,
+		.speed_hz = speed,
+		.bits_per_word = bits,
+	};
+
+	ret = ioctl(fd,SPI_IOC_MESSAGE(1),&tr);
+	if (ret<0){
+		perror("SPI_IOC_MESSAGE");
+	}
+
+	for (ret = 0; ret < ARRAY_SIZE(tx); ret++) {
+		if (!(ret % 6))
+			puts("");
+		printf("%.2X ", rx[ret]);
+	}
+	puts("");
+}
+
+
+int main(void) {
+
+
+	int ret,fd;
+
+
+	//access to spidev location
+	fd = open(PATH,O_RDWR);
+	if (fd<0){
+		perror("Bad fd open - check PATH");
+		return -1;
+	}
+	//setup SPI mode
+	ret = ioctl(fd,SPI_IOC_WR_MODE,&mode);
+	if(ret<0){
+		perror("SPI_IOC_WR_MODE");
+	}
+	ret = ioctl(fd,SPI_IOC_RD_MODE,&mode);
+	if(ret<0){
+		perror("SPI_IOC_RD_MODE");
+	}
+	ret = ioctl(fd,SPI_IOC_WR_BITS_PER_WORD,&bits);
+	if(ret<0){
+		perror("SPI_IOC_WR_BITS_PER_WORD");
+	}
+	ret = ioctl(fd,SPI_IOC_RD_BITS_PER_WORD,&bits);
+	if(ret<0){
+		perror("SPI_IOC_RD_BITS_PER_WORD");
+	}
+	ret = ioctl(fd,SPI_IOC_WR_MAX_SPEED_HZ,&speed);
+	if(ret<0){
+		perror("SPI_IOC_WR_MAX_SPEED_HZ");
+	}
+	ret = ioctl(fd,SPI_IOC_RD_MAX_SPEED_HZ,&speed);
+	if(ret<0){
+		perror("SPI_IOC_RD_MAX_SPEED_HZ");
+	}
+
+	write_data(fd);
+
+
+
+}

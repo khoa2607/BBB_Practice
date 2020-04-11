@@ -1,0 +1,37 @@
+import Adafruit_BBIO.GPIO as GPIO
+import Adafruit_BBIO.PWM  as PWM
+
+#===============================================================================
+#** BBB GPIO **
+#===============================================================================
+def GPIOrd (pX_Y, verbose):
+  GPIO.setup(pX_Y, GPIO.IN)
+  if GPIO.input(pX_Y):
+    if (verbose==1): print "GPIOrd: ",pX_Y," = 1";
+    else:            print "1"
+  else:
+    if (verbose==1): print "GPIOrd: ",pX_Y," = 0";
+    else:            print "0"
+  return 0
+def GPIOoff (pX_Y, verbose):
+  GPIO.setup (pX_Y, GPIO.OUT)
+  GPIO.output(pX_Y, GPIO.LOW);
+  if (verbose==1): print "GPIOoff: ",pX_Y;
+  return 0
+def GPIOon (pX_Y, verbose):
+  GPIO.setup (pX_Y, GPIO.OUT)
+  GPIO.output(pX_Y, GPIO.HIGH);
+  if (verbose==1): print "GPIOon: ",pX_Y;
+  return 0
+
+def PWMoff (pX_Y, verbose):
+  PWM.start  (pX_Y)
+  PWM.stop   (pX_Y)
+  PWM.cleanup()
+  if (verbose==1): print "PWMoff: ",pX_Y;
+  return 0
+def PWMon (pX_Y, duty, f_Hz, verbose):
+  PWM.start(pX_Y, float(duty), int(f_Hz))
+  if (verbose==1): print "PWMon: ",pX_Y,", duty = ",duty,", f_Hz = ",f_Hz;
+  return 0
+#===============================================================================

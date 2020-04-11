@@ -1,0 +1,276 @@
+import os
+import Adafruit_BBIO.SPI as     SPI
+from   Adafruit_BBIO.SPI import SPI
+
+#===============================================================================
+#** BBB SPI **
+#===============================================================================
+def SPIcfg(spiNum, spiBus, spiDev):
+  global spi
+
+  if (spiNum=="0"):
+    os.system("config-pin p9.17 spi_cs")
+    os.system("config-pin p9.21 spi")
+    os.system("config-pin p9.18 spi")
+    os.system("config-pin p9.22 spi_sclk")
+    #
+    spi=SPI(int(spiBus), int(spiDev))
+  else:
+    print "BBB supports 2 SPI interfaces SPI0, SPI1:"
+    print "            SPI#0   SPI#1"
+    print " --------   -----   -----"
+    print " SPI_CS0  : P9_17   P9_28"
+    print " SPI_CS1  :         P9_42"
+    print " SPI_MOSI : P9_18   P9_30"
+    print " SPI_MISO : P9_21   P9_29"
+    print " SPI_SCLK : P9_22   P9_31"
+  return 0
+
+# Patch BUG: 
+def reorder_rxBuff(rxBuff):
+  spiList = rxBuff[1:]
+  spiList.append(rxBuff[0])
+  return spiList
+
+def getID(spiList):
+  model  = ((spiList[ 1]<< 8)+(spiList[ 2]));
+  print "Model      = ",hex(model)
+  option = ((spiList[ 3]<< 8)+(spiList[ 4]));
+  print "Option     = ",hex(option)
+  swVer  = ((spiList[ 5]<< 8)+(spiList[ 6]));
+  print "SW-version = ",hex(swVer)
+  serial = ((spiList[ 7]<<32)+(spiList[ 8]<<24)+
+            (spiList[ 9]<<16)+(spiList[10]<< 8)+spiList[11]);
+  print "Serial     = ",hex(serial)
+  print ""
+  return 0
+
+def getStatus(spiList):
+  extRef   =  spiList[1]    &0x01;      print "extRef    = ",extRef
+  rfLocked =((spiList[1]>>1)&0x01)^0x01;print "rfLocked  = ",rfLocked
+  refLocked=((spiList[1]>>2)&0x01)^0x01;print "refLocked = ",refLocked
+  rfOutEna = (spiList[1]>>3)&0x01;      print "rfOutEna  = ",rfOutEna
+  voltOK   =((spiList[1]>>4)&0x01)^0x01;print "voltOK    = ",voltOK
+  refOutEna= (spiList[1]>>5)&0x01;      print "refOutEna = ",refOutEna
+  blanking = (spiList[1]>>6)&0x01;      print "blanking  = ",blanking
+  lockRcvry= (spiList[1]>>7)&0x01;      print "lockRcvry = ",lockRcvry
+  print ""
+  return 0
+
+def getFreq(spiList):
+  f=((spiList[1]<<40)+(spiList[2]<<32)+(spiList[3]<<24)+
+     (spiList[4]<<16)+(spiList[5]<< 8)+( spiList[6]   ));
+  print "Freq = ",int(f*1e-3) ,"\t( Hz)"
+  print "     = ",int(f*1e-6) ,"\t(KHz)"
+  print "     = ",int(f*1e-9) ,"\t(MHz)"
+  print ""
+  return 0
+
+def getPower(spiList):
+  byte1 = int(spiList[1]);
+  byte0 = int(spiList[2])
+
+  if (byte1 > 0x7F): pIsNeg = 1
+  else:              pIsNeg = 0
+
+  if (pIsNeg==1):
+    byte1 = 255-byte1
+    byte0 = 255-byte0
+
+  p = (byte1<<8) + byte0
+  if (pIsNeg==1): p = p + 1;
+
+  if (pIsNeg==1): print "Power = -",int(p/10),"(dBm)"
+  else:           print "Power = +",int(p/10),"(dBm)"
+  print ""
+  return 0
+
+def getRefSrc(spiList):
+  refSrc=spiList[1];
+  print "RefSrc = ",int(refSrc)," (0/1:Int/Ext)"
+  print ""
+  return 0
+
+def getTemp(spiList):
+  t=((spiList[1]<< 8)+ spiList[2]);
+  print "Temp = ",int(t*1e-1),"(C)"
+  print ""
+  return 0
+
+def SPIrd(verbose):
+  global spi
+
+  #-- Querry cmd = Get ID --
+  for i in range(0, 3): rxBuff=spi.xfer([0x01,0,0,0,0,0,0,0,0,0,0,0])
+  spiList=reorder_rxBuff(rxBuff)
+  if verbose:
+    print "-- Get ID : rxBuff = ", rxBuff
+    print "-- Get ID : spiList= ", spiList
+  getID(spiList)
+  #-- Querry cmd = Get Status --
+  for i in range(0, 3): rxBuff=spi.xfer([0x02,0x00])
+  spiList=reorder_rxBuff(rxBuff)
+  if verbose:
+    print "-- Get Status : rxBuff = ", rxBuff
+    print "-- Get Status : spiList= ", spiList
+ #getStatus(spiList)
+  getStatus(rxBuff)
+  #-- Querry cmd = Get Freq --
+  for i in range(0, 3): rxBuff=spi.xfer([0x04,0,0,0,0,0,0])
+  spiList=reorder_rxBuff(rxBuff)
+  if verbose:
+    print "-- Get Freq : rxBuff = ", rxBuff
+    print "-- Get Freq : spiList= ", spiList
+  getFreq(spiList)
+  #-- Querry cmd = Get Power --
+  for i in range(0, 3): rxBuff=spi.xfer([0x0D,0,0])
+  spiList=reorder_rxBuff(rxBuff)
+  if verbose:
+    print "-- Get Power : rxBuff = ", rxBuff
+    print "-- Get Power : spiList= ", spiList
+  getPower(spiList)
+  #-- Querry cmd = Get RefSrc --
+  for i in range(0, 3): rxBuff=spi.xfer([0x07,0])
+  spiList=reorder_rxBuff(rxBuff)
+  if verbose:
+    print "-- Get RefSrc : rxBuff = ", rxBuff
+    print "-- Get RefSrc : spiList= ", spiList
+  getRefSrc(spiList)
+  #-- Querry cmd = Get Temperature --
+  for i in range(0, 3): rxBuff=spi.xfer([0x10,0,0])
+  spiList=reorder_rxBuff(rxBuff)
+  if verbose:
+    print "-- Get Temp : rxBuff = ", rxBuff
+    print "-- Get Temp : spiList= ", spiList
+  getTemp(spiList)
+
+  spi.close()
+  return 0
+
+def SPIreset(verbose):
+  global spi
+
+  spiList=[0x0E];
+  if verbose: print "-- SPI Reset : ",spiList
+  for i in range(0, 2): spi.xfer(spiList)
+  spi.close()
+  return 0
+
+def SPIwr_RefSrc(refsrc, verbose):
+  global spi
+
+  byte0  =int(refsrc);
+  txBuff =[0x06,byte0]
+  if verbose: print "-- SPI Set Fout (TxBuff) =", txBuff
+  for i in range(0, 2): spi.xfer(txBuff)
+  spi.close()
+  return 0
+
+def SPIwr_Fout(f_Hz, verbose):
+  global spi
+
+  f_mHz=int(f_Hz)*1000
+  #
+  byte5=int((f_mHz>>40)&0xFF);
+  byte4=int((f_mHz>>32)&0xFF);
+  byte3=int((f_mHz>>24)&0xFF);
+  byte2=int((f_mHz>>16)&0xFF);
+  byte1=int((f_mHz>> 8)&0xFF);
+  byte0=int( f_mHz     &0xFF);
+  for i in range(0, 2): txBuff =[0x0C,byte5,byte4,byte3,byte2,byte1,byte0]
+  if verbose: print "-- SPI Set Fout (TxBuff) =", txBuff
+  spi.xfer(txBuff)
+  spi.close()
+  return 0
+
+def SPIwr_Pout(p, pSign, verbose):
+  global spi
+
+  pwr    =int(p)*10; #1/10 dBm
+  pwrSign=int(pSign);
+  
+  if (pwrSign==1): pwr=(-pwr)
+  byte1 =int((pwr>>8)&0xFF);
+  byte0 =int( pwr    &0xFF);
+  txBuff=[0x03,byte1,byte0]
+  if verbose: print "-- SPI Set Pout (TxBuff) =", txBuff
+  for i in range(0, 2): spi.xfer(txBuff)
+  spi.close()
+  return 0
+
+def SPIwr_RfOut(onoff, verbose):
+  global spi
+
+  byte0 =int(onoff);
+  txBuff =[0x0F,byte0]
+  if verbose: print "-- SPI Set RFout (TxBuff) =", txBuff
+  for i in range(0, 2): spi.xfer(txBuff)
+  spi.close()
+  return 0
+
+def SPIwr_FsweepOff(verbose):
+  global spi
+
+  txBuff =[0x21]
+  if verbose: print "-- SPI Set Fsweep Off (TxBuff) =", txBuff
+  for i in range(0, 2): spi.xfer(txBuff)
+  spi.close()
+  return 0
+
+def SPIwr_Fsweep(verbose):
+  global spi
+
+  code         =0x17;   #0x17/0x1C        = Fast/Normal Fsweep
+  Fstart       =1200000000000; #byte[22:17]      =  1200 MHz;
+  Fstop        =1300000000000; #byte[16:11]      =  1300 MHz;
+  points       =        100; #byte[10: 9]      = 20000 points (5MHz/point)
+  pwr          =   0  ; #byte[ 8: 7]      = power (1/10 dBm)
+  fDwellTime   =      1000000; #byte[ 6: 3]      = dwell time in usec
+  fSweepN      =   1  ; #byte[ 2: 1]      = #of times to run sweep (0=inf)
+                        #byte[    0][7:2] = 0
+  fSweepTrigger=   1  ; #byte[    0][3:2] = 0/1/2:sweepTrig/pointTrig/swTrig
+  fSweepDir    =   0  ; #byte[    0][1:0] = 0/1/2:up/down/updown
+
+  byte22= int((Fstart >> 40) & 0xFF);
+  byte21= int((Fstart >> 32) & 0xFF);
+  byte20= int((Fstart >> 24) & 0xFF);
+  byte19= int((Fstart >> 16) & 0xFF);
+  byte18= int((Fstart >>  8) & 0xFF);
+  byte17= int( Fstart        & 0xFF);
+  #
+  byte16= int((Fstop >> 40) & 0xFF);
+  byte15= int((Fstop >> 32) & 0xFF);
+  byte14= int((Fstop >> 24) & 0xFF);
+  byte13= int((Fstop >> 16) & 0xFF);
+  byte12= int((Fstop >>  8) & 0xFF);
+  byte11= int( Fstop        & 0xFF);
+  #
+  byte10= int((points >> 8) & 0xFF);
+  byte9 = int( points       & 0xFF);
+  #
+  byte8 = int((pwr >> 8) & 0xFF);
+  byte7 = int( pwr       & 0xFF);
+  #
+  byte6 = int((fDwellTime >> 24) & 0xFF);
+  byte5 = int((fDwellTime >> 16) & 0xFF);
+  byte4 = int((fDwellTime >>  8) & 0xFF);
+  byte3 = int( fDwellTime        & 0xFF);
+  #
+  byte2 = int((fSweepN >> 8) & 0xFF);
+  byte1 = int( fSweepN       & 0xFF);
+  #
+  byte0 = int(((fSweepTrigger & 0x3) << 2) + (fSweepDir & 0x3));
+  txBuff =[code,
+           byte22,byte21,byte20,byte19,byte18,byte17,
+           byte16,byte15,byte14,byte13,byte12,byte11,
+           byte10,byte9 ,
+           byte8 ,byte7 ,
+           byte6 ,byte5 ,byte4 ,byte3 ,
+           byte2 ,byte1 ,
+           byte0]
+  if verbose: print "-- SPI Set Freq Sweep (TxBuff) =", txBuff
+  spi.xfer(txBuff)
+  spi.xfer(txBuff)
+  spi.close()
+  return 0
+#===============================================================================
